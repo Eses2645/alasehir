@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Alaşehir Fotoğraf Galerisi</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f9f9f9;
+      color: #333;
+      text-align: center;
+      margin: 0;
+      padding: 0;
+    }
+
+    h1 {
+      color: #2a7c7b;
+      margin-top: 20px;
+    }
+
+    /* Fotoğraf galerisi */
+    .gallery {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
+      margin: 20px;
+    }
+
+    .gallery img {
+      width: 200px;
+      height: 200px;
+      object-fit: cover;
+      cursor: pointer;
+      transition: transform 0.3s;
+    }
+
+    .gallery img:hover {
+      transform: scale(1.1);
+    }
+
+    /* Modal (Büyütülmüş Fotoğraf) */
+    .modal {
+    display: none; /* Modal başlangıçta gizli olacak */
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.9);
+    justify-content: center;  /* Ortalamak için */
+    align-items: center;      /* Ortalamak için */
+}
+
+
+    .modal img {
+      margin: auto;
+      display: block;
+      width: 50%;  /* Fotoğraf boyutunu %50 yapıyoruz */
+      height: auto;
+    }
+
+    /* Modal Kapanma Butonu */
+    .close {
+      position: absolute;
+      top: 10px;
+      right: 25px;
+      color: white;
+      font-size: 40px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .close:hover,
+    .close:focus {
+      color: #f44336;
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+    /* Gezinme Tuşları */
+    .prev, .next {
+      cursor: pointer;
+      position: absolute;
+      top: 50%;
+      padding: 16px;
+      color: white;
+      font-weight: bold;
+      background-color: rgba(0, 0, 0, 0.5);
+      border: none;
+      border-radius: 50%;
+      user-select: none;
+      transform: translateY(-50%);
+      font-size: 24px;  /* İkonları biraz büyütüyoruz */
+    }
+
+    .prev {
+      left: 5%;  /* Yön simgesini slayta daha yakın yapıyoruz */
+    }
+
+    .next {
+      right: 5%;  /* Yön simgesini slayta daha yakın yapıyoruz */
+    }
+
+    /* Ana Sayfaya Dön Butonu */
+    .back-button {
+      display: inline-block;
+      margin-top: 10px;
+      margin-bottom: 20px;
+      padding: 10px 20px;
+      font-size: 16px;
+      color: white;
+      background-color: #4CAF50;
+      text-decoration: none;
+      border-radius: 5px;
+      transition: background-color 0.3s;
+    }
+
+    .back-button:hover {
+      background-color: #45a049;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Alaşehir Fotoğraf Galerisi</h1>
+
+  <div class="gallery" id="gallery">
+    <!-- Fotoğraflar burada görünecek -->
+  </div>
+
+  <a href="index.html" class="back-button">Ana Sayfaya Dön</a>
+
+  <!-- Modal (Büyütülmüş Fotoğraf) -->
+  <div id="myModal" class="modal">
+    <span class="close" onclick="closeModal()">&times;</span>
+    <img class="modal-content" id="modalImage">
+    <button class="prev" onclick="changeSlide(-1)">❮</button>
+    <button class="next" onclick="changeSlide(1)">❯</button>
+  </div>
+
+  <script>
+    // Fotoğraf dizisini img klasöründeki fotoğraflarla dinamik oluşturuyoruz
+    const imageFiles = [];
+    const totalImages = 50; // img klasöründeki fotoğraf sayısını burada belirleyin
+    for (let i = 1; i <= totalImages; i++) {
+      imageFiles.push(i + ".jpg");
+    }
+
+    const gallery = document.getElementById('gallery');
+    const modal = document.getElementById('myModal');
+    const modalImage = document.getElementById('modalImage');
+    let currentIndex = -1;  // Görüntülenen fotoğrafın dizini - Başlangıçta gösterilen bir fotoğraf yok
+
+    // Fotoğrafları galeride göster
+    imageFiles.forEach((image, index) => {
+      const img = document.createElement('img');
+      img.src = "img/" + image;
+      img.alt = "Alaşehir Fotoğrafı " + (index + 1);
+      img.onclick = function() {
+        openModal(index);
+      };
+      gallery.appendChild(img);
+    });
+
+    // Fotoğraf büyütme işlemi
+    function openModal(index) {
+      currentIndex = index;
+      modal.style.display = "flex";  // Modal display: flex
+      modalImage.src = "img/" + imageFiles[currentIndex];
+    }
+
+    // Modal'ı kapatma
+    function closeModal() {
+      modal.style.display = "none"; // Modal'ı gizle
+    }
+
+    // Gezinme (önceki ve sonraki fotoğraflara geçiş)
+    function changeSlide(n) {
+      currentIndex += n;
+      if (currentIndex < 0) currentIndex = imageFiles.length - 1;  // Başlangıçta döngü
+      if (currentIndex >= imageFiles.length) currentIndex = 0;  // Sondan döngü
+      modalImage.src = "img/" + imageFiles[currentIndex];
+    }
+
+    // Modal dışına tıklayınca kapat
+    window.onclick = function(event) {
+      if (event.target == modal) {
+        closeModal();
+      }
+    }
+
+    // Klavye ile gezinme (yön tuşları)
+    document.addEventListener('keydown', function(e) {
+      if (modal.style.display === "flex") {  // Eğer modal açıksa, yön tuşları ile geçiş
+        if (e.key === "ArrowLeft") {  // Sol ok tuşu
+          changeSlide(-1);
+        } else if (e.key === "ArrowRight") {  // Sağ ok tuşu
+          changeSlide(1);
+        }
+      }
+    });
+  </script>
+
+</body>
+</html>
