@@ -39,6 +39,9 @@
     }
     .section {
       margin: 20px 0;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
     }
 
     /* Mobil uyumlu tasarım için medya sorguları */
@@ -54,6 +57,8 @@
         padding: 10px 20px;
         font-size: 1em;
         margin: 5px;
+        width: 100%; /* Butonları tam genişlik yap */
+        box-sizing: border-box; /* Padding ve border'ı genişliğe dahil et */
       }
     }
 
@@ -69,6 +74,8 @@
         padding: 8px 16px;
         font-size: 0.9em;
         margin: 5px;
+        width: 100%; /* Butonları tam genişlik yap */
+        box-sizing: border-box; /* Padding ve border'ı genişliğe dahil et */
       }
     }
   </style>
